@@ -21,10 +21,7 @@ Login User with correct email and password
     [Tags]    smoke    login    tc_002
     [Setup]    Create user account
     Given I am on the automation exercise homepage
-    When I start the new user login/signup process
-    And I enter correct email and password
-    And I click login button
-    Then I should see that I am logged in
+    When I login with valid credentials
     [Teardown]    Delete user account
 
 Login User with incorrect email and password
@@ -39,10 +36,7 @@ Logout User
     [Tags]    smoke    logout    tc_004
     [Setup]    Create user account
     Given I am on the automation exercise homepage
-    When I start the new user login/signup process
-    And I enter correct email and password
-    And I click login button
-    And I should see that I am logged in
+    When I login with valid credentials
     And I click logout button
     Then I should be redirected to the login page
 
@@ -137,9 +131,7 @@ Place Order: Register while Checkout
     And I navigate to the Cart page
     And I proceed to checkout again
     Then I should see the address details and review order
-    When I enter a comment and place the order
-    And I enter payment details and confirm the order
-    Then I should see the order placed success message
+    When I complete the payment process
     [Teardown]    Delete user account
 
 Place Order: Register before Checkout
@@ -151,26 +143,19 @@ Place Order: Register before Checkout
     And I navigate to the Cart page
     And I proceed to checkout
     Then I should see the address details and review order
-    When I enter a comment and place the order
-    And I enter payment details and confirm the order
-    Then I should see the order placed success message
+    When I complete the payment process
     [Teardown]    Delete user account
 
 Place Order: Login before Checkout
     [Tags]    checkout    e2e    regression    tc_016
     [Setup]    Create user account
     Given I am on the automation exercise homepage
-    When I start the new user login/signup process
-    And I enter correct email and password
-    And I click login button
-    And I should see that I am logged in
+    When I login with valid credentials
     And I add products to the cart
     And I navigate to the Cart page
     And I proceed to checkout
     Then I should see the address details and review order
-    When I enter a comment and place the order
-    And I enter payment details and confirm the order
-    Then I should see the order placed success message
+    When I complete the payment process
     [Teardown]    Delete user account
 
 Remove Products From Cart
@@ -233,9 +218,8 @@ Add review on product
 Add to cart from Recommended items
     [Tags]    cart    home    regression    tc_022
     Given I am on the automation exercise homepage
-    When I scroll to the bottom of the page
-    Then I should see the "RECOMMENDED ITEMS" section
-    When I add a recommended product to the cart
+    When I should see the "RECOMMENDED ITEMS" section
+    And I add a recommended product to the cart
     And I view the cart
     Then The recommended product should be displayed in the cart
 
@@ -259,18 +243,7 @@ Verify address details in checkout page
 Download Invoice after purchase order
     [Tags]    invoice    checkout    regression    tc_024
     Given I am on the automation exercise homepage
-    When I add products to the cart
-    And I navigate to the Cart page
-    And I proceed to checkout
-    And I choose to register or login from the checkout modal
-    And I register a new account successfully
-    And I should see that I am logged in
-    And I navigate to the Cart page
-    And I proceed to checkout again
-    Then I should see the address details and review order
-    When I enter a comment and place the order
-    And I enter payment details and confirm the order
-    Then I should see the order placed success message
+    When I place an order as a newly registered user
     When I download the invoice
     Then invoice is downloaded successfully
     And I click the "Continue" button

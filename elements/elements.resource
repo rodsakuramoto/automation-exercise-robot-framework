@@ -1,6 +1,6 @@
 *** Variables ***
 &{home_page}
-...    signup_login_btn=xpath://a[contains(text(), 'Signup / Login')]
+...    signup_login_btn=xpath://a[contains(@href, '/login')]
 ...    home_logo=xpath://div[@class='logo pull-left']//img
 ...    home_link=xpath://a[contains(text(), 'Home')]
 ...    products_link=xpath://a[contains(text(), 'Products')]
