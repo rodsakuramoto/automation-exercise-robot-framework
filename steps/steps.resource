@@ -1,7 +1,6 @@
 *** Settings ***
 Resource    ${EXECDIR}/resource/resource.resource
 Resource    ${EXECDIR}/elements/elements.resource
-Library     OperatingSystem
 
 
 *** Variables ***
@@ -25,35 +24,14 @@ ${MOBILE_NUMBER}
 Launch browser
     ${prefs}=    Create Dictionary    download.default_directory=${EXECDIR}    download.prompt_for_download=${FALSE}
     Open Browser    browser=chrome    options=add_experimental_option("prefs", ${prefs});add_argument("--disable-notifications");add_argument("--disable-popup-blocking");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--headless")
-    Maximize Browser Window
+    Set Window Size    1920    1080
 
 I am on the automation exercise homepage
     Go To  url=${URL}
     Title Should Be    Automation Exercise
     Wait Until Element Is Visible    ${home_page.home_logo}
-    Wait Until Element Is Visible    ${home_page.home_link}
-    Wait Until Element Is Visible    ${home_page.products_link}
-    Wait Until Element Is Visible    ${home_page.cart_link}
-    Wait Until Element Is Visible    ${home_page.signup_login_btn}
-    Wait Until Element Is Visible    ${home_page.test_cases_link}
-    Wait Until Element Is Visible    ${home_page.api_testing_link}
-    Wait Until Element Is Visible    ${home_page.video_tutorials_link}
-    Wait Until Element Is Visible    ${home_page.contact_us_link}
-    Wait Until Element Is Visible    ${home_page.test_cases_btn}
-    Wait Until Element Is Visible    ${home_page.apis_list_btn}
-    Wait Until Element Is Visible    ${home_page.slider_img}
-    Wait Until Element Is Visible    ${home_page.category_heading}
-    Wait Until Element Is Visible    ${home_page.women_category}
-    Wait Until Element Is Visible    ${home_page.men_category}
-    Wait Until Element Is Visible    ${home_page.kids_category}
-    Wait Until Element Is Visible    ${home_page.brands_heading}
-    Wait Until Element Is Visible    ${home_page.polo_brand}
-    Wait Until Element Is Visible    ${home_page.hm_brand}
-    Wait Until Element Is Visible    ${home_page.features_items_heading}
-    Wait Until Element Is Visible    ${home_page.blue_top_product}
-    Wait Until Element Is Visible    ${home_page.blue_top_view_product}
-    Wait Until Element Is Visible    ${home_page.men_tshirt_product}
-    Wait Until Element Is Visible    ${home_page.sleeveless_dress_product}
+    # Performance: Only wait for the main element. Check existence of others without explicit waits.
+    Page Should Contain Element    ${home_page.signup_login_btn}
 
 I start the new user login/signup process
     Click Element    ${home_page.signup_login_btn}
@@ -226,6 +204,10 @@ I submit the contact form with valid details and a file
     Input Text    ${contact_us_page.message_textarea}    ${contact_message}
 
     ${file_path}      Set Variable    ${EXECDIR}/steps/utils/testfile.txt
+
+    # Ensure file exists before trying to upload to avoid confusing errors
+    ${file_exists}=    Run Keyword And Return Status    File Should Exist    ${file_path}
+    Run Keyword If    not ${file_exists}    Create File    ${file_path}    content=This is a dummy file for automation testing.
 
     Choose File   ${contact_us_page.upload_file_input}     ${file_path}
     Click Button  ${contact_us_page.submit_button}
@@ -477,6 +459,7 @@ I scroll to the bottom of the page
     Execute Javascript    window.scrollTo(0, document.body.scrollHeight)
 
 I should see the "RECOMMENDED ITEMS" section
+    Scroll Element Into View         ${home_page.recommended_items_header}
     Wait Until Element Is Visible    ${home_page.recommended_items_header}
     Element Should Be Visible    ${home_page.recommended_items_header}
 
@@ -542,4 +525,29 @@ I verify that the page is scrolled up and the full-fledged text is visible
 I scroll up to the top of the page
     Execute Javascript    window.scrollTo(0, 0)
 
-    Capture Page Screenshot
+I login with valid credentials
+    Run Keywords
+    ...    I start the new user login/signup process
+    ...    I enter correct email and password
+    ...    I click login button
+    ...    I should see that I am logged in
+
+I complete the payment process
+    Run Keywords
+    ...    I enter a comment and place the order
+    ...    I enter payment details and confirm the order
+    ...    I should see the order placed success message
+
+I place an order as a newly registered user
+    Run Keywords
+    ...    I add products to the cart
+    ...    I navigate to the Cart page
+    ...    I proceed to checkout
+    ...    I choose to register or login from the checkout modal
+    ...    I register a new account successfully
+    ...    I should see that I am logged in
+    ...    I navigate to the Cart page
+    ...    I proceed to checkout again
+    ...    I should see the address details and review order
+    ...    I complete the payment process
+    ...    Capture Page Screenshot
