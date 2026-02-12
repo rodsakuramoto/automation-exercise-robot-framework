@@ -1,0 +1,46 @@
+# ------------------------------------------------------
+# Specific Project Directories to Ignore
+# ------------------------------------------------------
+
+# Virtual Environment: Contains local library installations and binaries.
+# Should never be uploaded to the repo.
+.venv/
+
+# Test Results: Contains execution reports, logs, and screenshots.
+# These are generated artifacts and should not be version controlled.
+results/
+
+# ------------------------------------------------------
+# Standard Python Ignores
+# ------------------------------------------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# ------------------------------------------------------
+# OS and IDE System Files
+# ------------------------------------------------------
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Editor/IDE settings (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.swp
