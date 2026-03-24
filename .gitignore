@@ -10,6 +10,12 @@
 # These are generated artifacts and should not be version controlled.
 results/
 
+# Pabot / Robot Framework generated files
+.pabotsuitenames
+log.html
+report.html
+output.xml
+
 # ------------------------------------------------------
 # Standard Python Ignores
 # ------------------------------------------------------
