@@ -38,9 +38,8 @@ jobs:
         uses: nick-fields/retry@v4
         with:
           timeout_seconds: 30
-          retry_wait_seconds: 30
-          max_attempts: 2
-          command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
+          max_attempts: 3
+          command: robot -d results -v BROWSER:headlesschrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
         if: always()
@@ -80,9 +79,8 @@ jobs:
         uses: nick-fields/retry@v4
         with:
           timeout_seconds: 30
-          retry_wait_seconds: 30
-          max_attempts: 2
-          command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
+          max_attempts: 3
+          command: robot -d results -v BROWSER:headlessfirefox -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
         if: always()
@@ -125,9 +123,8 @@ jobs:
         uses: nick-fields/retry@v4
         with:
           timeout_seconds: 30
-          retry_wait_seconds: 30
-          max_attempts: 2
-          command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
+          max_attempts: 3
+          command: robot -d results -v BROWSER:safari -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
         if: always()
@@ -138,7 +135,7 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 4. GENERATE REPORTS (Separado por Browser)
+  # 4. GENERATE REPORTS
   # ==========================================
   generate-reports:
     needs: [test-chromium, test-firefox, test-webkit]
