@@ -12,12 +12,22 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  # ==========================================
+  # JOB 1: RUN TESTS IN PARALLEL (MATRIX)
+  # ==========================================
   test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        suite: ['authentication.robot', 'cart_and_checkout.robot', 'contact_us.robot', 'home_page.robot', 'products.robot', 'subscription.robot', 'test_cases_page.robot']
+        suite:
+          - 'authentication.robot'
+          - 'cart_and_checkout.robot'
+          - 'contact_us.robot'
+          - 'home_page.robot'
+          - 'products.robot'
+          - 'subscription.robot'
+          - 'test_cases_page.robot'
 
     steps:
       - name: Checkout Code
@@ -34,19 +44,60 @@ jobs:
           pip install robotframework
           pip install robotframework-seleniumlibrary
           pip install robotframework-faker
-          pip install robotframework-ghareports
 
       - name: Run Tests with Matrix
-        # 💡 Restored the correct class name but kept the clean exit wrapper so the summary safely flushes
-        run: robot --listener RobotFrameworkGhaReports -d results "test_cases/${{ matrix.suite }}" || echo "ROBOT_EXIT_CODE=$?" >> $GITHUB_ENV
-
-      - name: Fail Job if Tests Encountered Errors
-        if: env.ROBOT_EXIT_CODE != '' && env.ROBOT_EXIT_CODE != '0'
-        run: exit ${{ env.ROBOT_EXIT_CODE }}
+        # 💡 Generates a uniquely named XML file for each matrix job to avoid conflicts during merge
+        run: robot -d results -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Test Results
-        if: always() # Ensures reports are uploaded even if tests fail
+        if: always() # Ensures XMLs are uploaded even if tests fail
         uses: actions/upload-artifact@v4
         with:
-          name: robot-test-results-${{ matrix.suite }}
-          path: results/
+          name: robot-test-results-${{ strategy.job-index }}
+          path: results/output-${{ strategy.job-index }}.xml
+          retention-days: 1 # We only need this temporarily for the next job
+
+  # ==========================================
+  # JOB 2: MERGE XMLs AND GENERATE SUMMARY
+  # ==========================================
+  generate-report:
+    needs: test
+    if: always() # 🚨 CRITICAL: Runs even if the 'test' matrix jobs failed
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Robot Framework
+        run: pip install robotframework
+
+      - name: Download all Matrix Results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: robot-test-results-*
+          path: all-results
+          merge-multiple: true # Flattens all downloaded XMLs into the 'all-results' folder
+
+      - name: Merge Results (Rebot)
+        # 💡 Combines all scattered XMLs into a single, comprehensive test report
+        run: rebot --name "Consolidated Test Report" --outputdir final-results --output merged-output.xml all-results/*.xml
+
+      - name: Generate GitHub Actions Summary
+        uses: joonvena/robot-reporter@v2.5
+        with:
+          report_path: final-results
+          summary: 'true'
+          show_passed_tests: 'false' # Keeps the summary clean by only showing failures
+
+      - name: Upload Consolidated HTML Report (Optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Consolidated-Robot-Report
+          path: final-results/
