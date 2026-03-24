@@ -80,7 +80,7 @@ jobs:
           pip install robotframework-ghareports # 💡 Installed here to process the merged XML
 
       - name: Download all Matrix Results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           pattern: robot-test-results-*
           path: all-results
