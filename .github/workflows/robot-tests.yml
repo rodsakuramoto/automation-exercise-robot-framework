@@ -2,38 +2,38 @@ name: Robot Framework Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ main ]
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install robotframework robotframework-seleniumlibrary robotframework-faker
+          pip install robotframework
+          pip install robotframework-seleniumlibrary
+          pip install robotframework-faker
+          pip install robotframework-pabot
 
-      - name: Install Xvfb (Virtual Framebuffer)
-        run: sudo apt-get update && sudo apt-get install -y xvfb
-
-      - name: Run Robot Framework Tests
-        run: xvfb-run --auto-servernum robot -d results test_cases/test_cases.robot
+      - name: Run Tests in Parallel
+        run: pabot --processes 4 -d results test_cases/
 
       - name: Upload Test Results
+        if: always() # Ensures reports are uploaded even if tests fail
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: robot-framework-reports
+          name: robot-test-results
           path: results/
