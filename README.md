@@ -30,6 +30,7 @@ Ensure you have the following installed:
 pip install robotframework
 pip install robotframework-seleniumlibrary
 pip install robotframework-faker
+pip install robotframework-pabot
 ```
 
 ## Running the Tests
