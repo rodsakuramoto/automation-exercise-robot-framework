@@ -1,5 +1,7 @@
 # Automation Exercise - Robot Framework Project
 
+[![Robot Framework Tests](https://github.com/rodsakuramoto/automation-exercise-robot-framework/actions/workflows/robot-tests.yml/badge.svg)](https://github.com/rodsakuramoto/automation-exercise-robot-framework/actions/workflows/robot-tests.yml)
+
 This project contains automated test scripts for the [Automation Exercise](http://automationexercise.com) website, developed using **Robot Framework** and **SeleniumLibrary**.
 
 ## Project Structure
