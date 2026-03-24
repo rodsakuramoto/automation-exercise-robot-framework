@@ -37,6 +37,7 @@ jobs:
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v3
         with:
+          timeout_seconds: 30
           retry_wait_seconds: 30
           max_attempts: 2
           command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
@@ -78,6 +79,7 @@ jobs:
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v3
         with:
+          timeout_seconds: 30
           retry_wait_seconds: 30
           max_attempts: 2
           command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
@@ -122,6 +124,7 @@ jobs:
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v3
         with:
+          timeout_seconds: 30
           retry_wait_seconds: 30
           max_attempts: 2
           command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
