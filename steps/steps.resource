@@ -23,7 +23,7 @@ ${MOBILE_NUMBER}
 *** Keywords ***
 Launch browser
     ${prefs}=    Create Dictionary    download.default_directory=${EXECDIR}    download.prompt_for_download=${FALSE}
-    Open Browser    browser=chrome    options=add_experimental_option("prefs", ${prefs});add_argument("--disable-notifications");add_argument("--disable-popup-blocking");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--headless")
+    Open Browser    browser=chrome    options=add_experimental_option("prefs", ${prefs});add_argument("--disable-notifications");add_argument("--disable-popup-blocking");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--headless");add_argument("--host-resolver-rules=MAP *googleadservices.com 0.0.0.0, MAP *googlesyndication.com 0.0.0.0, MAP *g.doubleclick.net 0.0.0.0")
     Set Window Size    1920    1080
 
 I am on the automation exercise homepage
@@ -45,11 +45,15 @@ I start the new user login/signup process
 
 I enter valid name and email address
     ${user_name}    FakerLibrary.Name
-    ${user_email}    FakerLibrary.Email
-    Input Text    ${login_signup_page.signup_name_input}    ${user_name}
-    Input Text    ${login_signup_page.signup_email_input}    ${user_email}
-    Click Element    ${login_signup_page.signup_btn}
-    Wait Until Element Is Visible    ${account_info_page.account_info_text}
+    FOR    ${index}    IN RANGE    5
+        ${user_email}    FakerLibrary.Email
+        Input Text    ${login_signup_page.signup_name_input}    ${user_name}
+        Input Text    ${login_signup_page.signup_email_input}    ${user_email}
+        Click Element    ${login_signup_page.signup_btn}
+        ${is_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${account_info_page.account_info_text}
+        Exit For Loop If    ${is_visible}
+    END
+    Run Keyword If    not ${is_visible}    Fail    Failed to proceed to the account info page after 5 attempts.
     Capture Page Screenshot
 
 
@@ -287,6 +291,7 @@ I should see the subscription success message
     Element Should Contain           ${footer.success_msg}    You have been successfully subscribed!
 
 I navigate to the Cart page
+    Sleep   3s
     Click Element    ${home_page.cart_link}
     Title Should Be    Automation Exercise - Checkout
     Wait Until Element Is Visible    ${cart_page.breadcrumb}
@@ -395,8 +400,8 @@ I enter payment details and confirm the order
     Click Element    ${payment_page.pay_button}
 
 I should see the order placed success message
-    Page Should Contain    Congratulations! Your order has been confirmed!
     Wait Until Element Is Visible    ${order_placed_page.continue_btn}
+    Page Should Contain    Congratulations! Your order has been confirmed!
 
 I should see the product in the cart
     Wait Until Element Is Visible    ${cart_page.cart_rows}
