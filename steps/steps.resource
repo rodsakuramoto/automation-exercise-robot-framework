@@ -291,6 +291,7 @@ I should see the subscription success message
     Element Should Contain           ${footer.success_msg}    You have been successfully subscribed!
 
 I navigate to the Cart page
+    Sleep   3s
     Click Element    ${home_page.cart_link}
     Title Should Be    Automation Exercise - Checkout
     Wait Until Element Is Visible    ${cart_page.breadcrumb}
