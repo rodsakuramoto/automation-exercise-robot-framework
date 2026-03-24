@@ -37,8 +37,8 @@ jobs:
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v4
         with:
-          timeout_seconds: 30
-          max_attempts: 3
+          timeout_seconds: 60
+          max_attempts: 2
           command: robot -d results -v BROWSER:headlesschrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
