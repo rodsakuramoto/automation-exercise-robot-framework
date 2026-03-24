@@ -8,7 +8,8 @@ on:
   workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # 💡 Must be a string for GitHub Actions environment variables
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   test:
@@ -36,7 +37,8 @@ jobs:
           pip install robotframework-ghareports
 
       - name: Run Tests with Matrix
-        run: robot --listener robotframework_ghareports -d results "test_cases/${{ matrix.suite }}" || echo "ROBOT_EXIT_CODE=$?" >> $GITHUB_ENV
+        # 💡 Restored the correct class name but kept the clean exit wrapper so the summary safely flushes
+        run: robot --listener RobotFrameworkGhaReports -d results "test_cases/${{ matrix.suite }}" || echo "ROBOT_EXIT_CODE=$?" >> $GITHUB_ENV
 
       - name: Fail Job if Tests Encountered Errors
         if: env.ROBOT_EXIT_CODE != '' && env.ROBOT_EXIT_CODE != '0'
