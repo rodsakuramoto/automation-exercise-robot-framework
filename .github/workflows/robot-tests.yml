@@ -10,6 +10,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: ['authentication.robot', 'cart_and_checkout.robot', 'contact_us.robot', 'home_page.robot', 'products.robot', 'subscription.robot', 'test_cases_page.robot']
 
     steps:
       - name: Checkout Code
@@ -26,19 +30,14 @@ jobs:
           pip install robotframework
           pip install robotframework-seleniumlibrary
           pip install robotframework-faker
-          pip install robotframework-pabot
           pip install robotframework-ghareports
 
-      - name: Run Tests in Parallel
-        run: pabot --processes 4 -d results test_cases/
+      - name: Run Tests with Matrix
+        run: robot --listener RobotFrameworkGhaReports -d results "test_cases/${{ matrix.suite }}"
 
       - name: Upload Test Results
         if: always() # Ensures reports are uploaded even if tests fail
         uses: actions/upload-artifact@v4
         with:
-          name: robot-test-results
+          name: robot-test-results-${{ matrix.suite }}
           path: results/
-
-      - name: Test Summary
-        if: always() # Ensures reports are uploaded even if tests fail
-        run: robot --listener GHAReports -d results/ tests/
