@@ -9,12 +9,8 @@ Suite Teardown      Close Browser
 Register a new user successfully
     [Tags]    smoke    registration    tc_001
     Given I am on the automation exercise homepage
-    When I start the new user login/signup process
-    And I enter valid name and email address
-    And I fill in the account information and address details
-    And I confirm the account creation
-    Then the account should be created successfully
-    And I should see that I am logged in
+    When I register a new user
+    Then I should be successfully registered and logged in
     [Teardown]    Delete user account
 
 Login User with correct email and password
@@ -22,29 +18,24 @@ Login User with correct email and password
     [Setup]    Create user account
     Given I am on the automation exercise homepage
     When I login with valid credentials
+    Then I should be logged in
     [Teardown]    Delete user account
 
 Login User with incorrect email and password
     [Tags]    smoke    login    tc_003
     Given I am on the automation exercise homepage
-    When I start the new user login/signup process
-    And I enter incorrect email and password
-    And I click login button
-    Then I should see a error message of incorrect email or password
+    When I attempt to login with invalid credentials
+    Then I should see an invalid credentials error message
 
 Logout User
     [Tags]    smoke    logout    tc_004
-    [Setup]    Create user account
-    Given I am on the automation exercise homepage
-    When I login with valid credentials
-    And I click logout button
+    Given I am logged in
+    When I log out
     Then I should be redirected to the login page
 
 Register User with existing email
     [Tags]    smoke    registration    tc_005
     [Setup]    Create user account
-    Given I am on the automation exercise homepage
-    When I start the new user login/signup process
-    And I enter an existing name and email address
-    And I click signup button
-    Then I should see a error message that email address already exist
+    Given I am on the signup page
+    When I attempt to register with an existing email
+    Then I should see an email exists error message

@@ -56,19 +56,17 @@ I enter valid name and email address
     Run Keyword If    not ${is_visible}    Fail    Failed to proceed to the account info page after 5 attempts.
     Capture Page Screenshot
 
+    Set Test Variable    ${USER_NAME}    ${user_name}
+    Set Test Variable    ${USER_EMAIL}   ${user_email}
 
-    Set Test Variable    ${USER_NAME}
-    Set Test Variable    ${USER_EMAIL}
-
-    @{user_name}    Split String
+    @{user_name_parts}    Split String
     ...    string=${user_name}
     ...    separator=${SPACE}
 
-    ${FIRST_NAME}   Set Variable    ${USER_NAME}[0]
-    ${LAST_NAME}   Set Variable    ${USER_NAME}[1]
-
-    Set Test Variable    ${FIRST_NAME}
-    Set Test Variable    ${LAST_NAME}
+    Set Test Variable    ${FIRST_NAME}    ${user_name_parts}[0]
+    ${parts_length}=     Get Length       ${user_name_parts}
+    ${last_name_val}=    Run Keyword If   ${parts_length} > 1    Set Variable    ${user_name_parts}[1]    ELSE    Set Variable    ${user_name_parts}[0]
+    Set Test Variable    ${LAST_NAME}     ${last_name_val}
 
 I fill in the account information and address details
     Click Element    ${account_info_page.gender_male_radio}
@@ -99,7 +97,7 @@ I fill in the account information and address details
     Input Text    ${account_info_page.zipcode_input}       ${zipcode}
     Input Text    ${account_info_page.mobile_number_input}     ${mobile_number}
 
-    Set Test Variable    ${USER_PASSWORD}
+    Set Test Variable    ${USER_PASSWORD}    ${user_password}
 
     Set Test Variable    ${COMPANY}    ${company}
     Set Test Variable    ${ADDRESS1}    ${address1}
@@ -135,16 +133,14 @@ Delete user account
     Click Element    ${account_created_deleted.continue_btn}
 
 Create user account
-    Run Keywords
-    ...    I am on the automation exercise homepage
-    ...    I start the new user login/signup process
-    ...    I enter valid name and email address
-    ...    I fill in the account information and address details
-    ...    I confirm the account creation
-    ...    the account should be created successfully
+    I am on the automation exercise homepage
+    I start the new user login/signup process
+    I enter valid name and email address
+    I fill in the account information and address details
+    I confirm the account creation
+    the account should be created successfully
+    I should see that I am logged in
     Capture Page Screenshot
-    ...    I should see that I am logged in
-
     Click Element    ${account_created_deleted.logout_btn}
 
 I enter correct email and password
@@ -162,7 +158,7 @@ I should see a error message of incorrect email or password
     Wait Until Element Is Visible    ${login_signup_page.login_error_msg}
     Element Text Should Be    ${login_signup_page.login_error_msg}    Your email or password is incorrect!
 
-I click logout button
+I logout of the account
     Click Element    ${account_created_deleted.logout_btn}
 
 I should be redirected to the login page
@@ -221,7 +217,7 @@ I should see the success message
     Wait Until Element Is Visible    ${contact_us_page.success_msg}
     Page Should Contain    Success! Your details have been submitted successfully.
 
-I should be able to return to the home page
+I return to the home page
     Click Element    ${home_page.home_link}
     Title Should Be    Automation Exercise
     Wait Until Element Is Visible    ${home_page.home_logo}
@@ -246,7 +242,7 @@ I should be redirected to the All Products page
 The products list should be visible
     Wait Until Element Is Visible    ${products_page.products_list}
 
-I click on View Product of the first product
+I view the details of the first product
     Wait Until Element Is Visible    ${products_page.first_product_view_btn}
     Click Element    ${products_page.first_product_view_btn}
 
@@ -281,7 +277,8 @@ I scroll down to the footer
     Wait Until Element Is Visible    ${footer.subscription_header}
     Element Should Contain           ${footer.subscription_header}    SUBSCRIPTION
 
-I enter email address in subscription input and click arrow button
+I subscribe to the newsletter
+    I scroll down to the footer
     ${random_email}    FakerLibrary.Email
     Input Text         ${footer.email_input}    ${random_email}
     Click Button       ${footer.submit_btn}
@@ -291,8 +288,8 @@ I should see the subscription success message
     Element Should Contain           ${footer.success_msg}    You have been successfully subscribed!
 
 I navigate to the Cart page
-    Sleep   3s
-    Click Element    ${home_page.cart_link}
+    Wait Until Element Is Enabled    ${home_page.cart_link}    timeout=5s
+    Click Element                    ${home_page.cart_link}
     Title Should Be    Automation Exercise - Checkout
     Wait Until Element Is Visible    ${cart_page.breadcrumb}
 
@@ -308,18 +305,23 @@ I add the second product to the cart
     Wait Until Element Is Visible    ${products_page.add_to_cart_2}
     Click Element                    ${products_page.add_to_cart_2}
 
+I add the first and second products to the cart
+    I add the first product to the cart
+    I continue shopping
+    I add the second product to the cart
+
 I view the cart
     Wait Until Element Is Visible    ${products_page.view_cart_modal_link}
     Click Element                    ${products_page.view_cart_modal_link}
 
-Then both products should be added to the cart
+both products should be added to the cart
     Title Should Be    Automation Exercise - Checkout
     Wait Until Element Is Visible    ${cart_page.cart_rows}
     ${count}=    Get Element Count   ${cart_page.cart_rows}
     Should Be Equal As Integers      ${count}    2
     Log    Verified that 2 products are present in the cart.
 
-And their prices, quantity, and total price should be correct
+their prices, quantity, and total price should be correct
     Element Text Should Be    ${cart_page.product_1_price}       Rs. 500
     Element Text Should Be    ${cart_page.product_1_quantity}    1
     Element Text Should Be    ${cart_page.product_1_total}       Rs. 500
@@ -327,12 +329,12 @@ And their prices, quantity, and total price should be correct
     Element Text Should Be    ${cart_page.product_2_quantity}    1
     Element Text Should Be    ${cart_page.product_2_total}       Rs. 400
 
-I click on View Product for the first product
+I view the details of the first product on the home page
     Scroll Element Into View    ${home_page.blue_top_view_product}
     Wait Until Element Is Visible    ${home_page.blue_top_view_product}
     Click Element    ${home_page.blue_top_view_product}
 
-I increase the quantity to "${quantity}"
+I set the product quantity to "${quantity}"
     Wait Until Element Is Visible    ${product_details_page.quantity_input}
     Double Click Element    ${product_details_page.quantity_input}
     Input Text    ${product_details_page.quantity_input}    ${quantity}
@@ -368,16 +370,16 @@ I proceed to checkout
     Wait Until Element Is Visible    ${checkout_page.proceed_to_checkout_btn}
     Click Element                    ${checkout_page.proceed_to_checkout_btn}
 
-I choose to register or login from the checkout modal
+I initiate registration from checkout
     Wait Until Element Is Visible    ${checkout_page.register_login_modal_link}
     Click Element                    ${checkout_page.register_login_modal_link}
 
 I register a new account successfully
-    Run Keyword    I start the new user login/signup process
-    Run Keyword    I enter valid name and email address
-    Run Keyword    I fill in the account information and address details
-    Run Keyword    I confirm the account creation
-    Run Keyword    the account should be created successfully
+    I start the new user login/signup process
+    I enter valid name and email address
+    I fill in the account information and address details
+    I confirm the account creation
+    the account should be created successfully
 
 I proceed to checkout again
     Click Element    ${checkout_page.proceed_to_checkout_btn}
@@ -446,7 +448,7 @@ I should see the "Write Your Review" section
     Wait Until Element Is Visible    ${product_details_page.review_header}
     Element Should Be Visible    ${product_details_page.review_header}
 
-I submit a review with name, email, and content
+I submit a valid product review
     ${name}    FakerLibrary.Name
     ${email}   FakerLibrary.Email
     ${review}  FakerLibrary.Sentence
@@ -515,15 +517,15 @@ invoice is downloaded successfully
 I click the "Continue" button
     Click Element    ${order_placed_page.continue_btn}
 
-I verify "SUBSCRIPTION" is visible
+the "SUBSCRIPTION" section should be visible
     Wait Until Element Is Visible    ${footer.subscription_header}
     Element Should Contain           ${footer.subscription_header}    SUBSCRIPTION
 
-I click on the scroll up arrow
+I scroll up using the arrow button
     Wait Until Element Is Visible    ${home_page.scroll_up_arrow}
     Click Element    ${home_page.scroll_up_arrow}
 
-I verify that the page is scrolled up and the full-fledged text is visible
+the page should be scrolled to the top
     Wait Until Element Is Visible    ${home_page.full_fledged_text}
     Element Should Be Visible    ${home_page.full_fledged_text}
 
@@ -531,28 +533,236 @@ I scroll up to the top of the page
     Execute Javascript    window.scrollTo(0, 0)
 
 I login with valid credentials
-    Run Keywords
-    ...    I start the new user login/signup process
-    ...    I enter correct email and password
-    ...    I click login button
-    ...    I should see that I am logged in
+    I start the new user login/signup process
+    I enter correct email and password
+    I click login button
 
 I complete the payment process
-    Run Keywords
-    ...    I enter a comment and place the order
-    ...    I enter payment details and confirm the order
-    ...    I should see the order placed success message
+    I enter a comment and place the order
+    I enter payment details and confirm the order
+    I should see the order placed success message
 
 I place an order as a newly registered user
-    Run Keywords
-    ...    I add products to the cart
-    ...    I navigate to the Cart page
-    ...    I proceed to checkout
-    ...    I choose to register or login from the checkout modal
-    ...    I register a new account successfully
-    ...    I should see that I am logged in
-    ...    I navigate to the Cart page
-    ...    I proceed to checkout again
-    ...    I should see the address details and review order
-    ...    I complete the payment process
-    ...    Capture Page Screenshot
+    I add products to the cart
+    I navigate to the Cart page
+    I proceed to checkout
+    I initiate registration from checkout
+    I register a new account successfully
+    I should see that I am logged in
+    I navigate to the Cart page
+    I proceed to checkout again
+    I should see the address details and review order
+    I complete the payment process
+    Capture Page Screenshot
+
+I attempt to login with invalid credentials
+    I start the new user login/signup process
+    I enter incorrect email and password
+    I click login button
+
+I attempt to register with an existing email
+    I start the new user login/signup process
+    I enter an existing name and email address
+    I click signup button
+
+I register a new user
+    I start the new user login/signup process
+    I enter valid name and email address
+    I fill in the account information and address details
+    I confirm the account creation
+
+I should be successfully registered and logged in
+    the account should be created successfully
+    I should see that I am logged in
+
+I should be logged in
+    I should see that I am logged in
+
+I should see an invalid credentials error message
+    I should see a error message of incorrect email or password
+
+I am logged in
+    Create user account
+    I am on the automation exercise homepage
+    I login with valid credentials
+    I should be logged in
+
+I log out
+    I logout of the account
+
+I am on the signup page
+    I am on the automation exercise homepage
+    I start the new user login/signup process
+
+I should see an email exists error message
+    I should see a error message that email address already exist
+
+I add two products to the cart
+    I navigate to the Products page
+    I add the first and second products to the cart
+    I view the cart
+
+The cart should contain two products with correct details
+    both products should be added to the cart
+    their prices, quantity, and total price should be correct
+
+I am on the product detail page of a product
+    I am on the automation exercise homepage
+    I view the details of the first product on the home page
+    I should be landed on the product detail page
+
+I add "${quantity}" units of the product to the cart
+    I set the product quantity to "${quantity}"
+    I add the product to the cart
+    I view the cart
+
+The cart should show the product with quantity "${quantity}"
+    The product should be displayed in the cart with quantity "${quantity}"
+
+A product is in the cart
+    I am on the automation exercise homepage
+    I add products to the cart
+    I navigate to the Cart page
+
+I checkout as a new user and place the order
+    I proceed to checkout
+    I initiate registration from checkout
+    I register a new account successfully
+    I should see that I am logged in
+    I navigate to the Cart page
+    I proceed to checkout again
+    I should see the address details and review order
+    I complete the payment process
+
+I add a product to the cart and checkout to place the order
+    I add products to the cart
+    I navigate to the Cart page
+    I proceed to checkout
+    I should see the address details and review order
+    I complete the payment process
+
+The order should be confirmed
+    I should see the order placed success message
+
+I am registered and logged in
+    I am on the automation exercise homepage
+    I register a new account successfully
+    I should see that I am logged in
+
+The cart should be empty
+    The product should be removed from the cart
+
+I search for a product and add it to the cart
+    I navigate to the Products page
+    I should be redirected to the All Products page
+    I search for the product "Men Tshirt"
+    products matching "Men Tshirt" should be displayed
+    I add the searched products to the cart
+    I navigate to the Cart page
+    I should see the product in the cart
+
+I log in
+    I login with valid credentials
+
+The product should still be in my cart
+    I navigate to the Cart page
+    I should see the product in the cart
+
+I am a registered user with products in the cart
+    I am on the automation exercise homepage
+    I register a new account successfully
+    I should see that I am logged in
+    I add products to the cart
+    I navigate to the Cart page
+    I should see the product in the cart
+
+My address details should be pre-filled correctly
+    I should see the address details and review order
+    I verify that the delivery and billing address is the same as the registration address
+
+I have placed an order
+    I am on the automation exercise homepage
+    I place an order as a newly registered user
+
+The invoice should be downloaded successfully
+    invoice is downloaded successfully
+    I click the "Continue" button
+
+I submit the contact us form with valid details
+    I navigate to the Contact Us page
+    I submit the contact form with valid details and a file
+
+I should see a success message and be able to return home
+    I should see the success message
+    I return to the home page
+
+I add a recommended item to the cart
+    I should see the "RECOMMENDED ITEMS" section
+    I add a recommended product to the cart
+    I view the cart
+
+The item should appear in the cart
+    The recommended product should be displayed in the cart
+
+I scroll to the bottom and then to the top using the arrow
+    I scroll to the bottom of the page
+    the "SUBSCRIPTION" section should be visible
+    I scroll up using the arrow button
+
+The page should scroll accordingly
+    the page should be scrolled to the top
+
+I scroll to the bottom and then back to the top
+    I scroll to the bottom of the page
+    the "SUBSCRIPTION" section should be visible
+    I scroll up to the top of the page
+
+I am on the all products page
+    I am on the automation exercise homepage
+    I navigate to the Products page
+    I should be redirected to the All Products page
+
+I view a product's details
+    I view the details of the first product
+
+I should see the correct product details
+    I should be landed on the product detail page
+    I should see the product details including name, category, price, availability, condition, and brand
+
+products matching "${term}" should be displayed
+    I should see the Searched Products section
+    I should see products related to "${term}"
+
+I navigate to the "${main}" > "${sub}" category
+    I browse to the "${main}" > "${sub}" category
+
+I should see the "${title}" catalog
+    The "${title}" catalog should be displayed
+
+I filter by brand "${brand}"
+    I filter products by the brand "${brand}"
+
+I am viewing a product's details
+    I am on the all products page
+    I view the details of the first product
+    I should be landed on the product detail page
+
+I submit a review
+    I should see the "Write Your Review" section
+    I submit a valid product review
+
+I should see a success message for the review
+    I should see the review success message
+
+I am on the cart page
+    I am on the automation exercise homepage
+    I navigate to the Cart page
+
+I should see a subscription success message
+    I should see the subscription success message
+
+I navigate to the Test Cases page
+    I navigate to the Test Cases section
+
+I should see the test cases page
+    the test cases catalog should be accessible
