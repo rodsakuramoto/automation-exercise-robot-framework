@@ -122,7 +122,7 @@ jobs:
         run: sudo safaridriver --enable
 
       - name: Run Tests with Auto-Retry
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           timeout_seconds: 30
           retry_wait_seconds: 30
