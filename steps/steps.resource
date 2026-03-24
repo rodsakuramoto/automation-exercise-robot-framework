@@ -45,11 +45,15 @@ I start the new user login/signup process
 
 I enter valid name and email address
     ${user_name}    FakerLibrary.Name
-    ${user_email}    FakerLibrary.Email
-    Input Text    ${login_signup_page.signup_name_input}    ${user_name}
-    Input Text    ${login_signup_page.signup_email_input}    ${user_email}
-    Click Element    ${login_signup_page.signup_btn}
-    Wait Until Element Is Visible    ${account_info_page.account_info_text}
+    FOR    ${index}    IN RANGE    5
+        ${user_email}    FakerLibrary.Email
+        Input Text    ${login_signup_page.signup_name_input}    ${user_name}
+        Input Text    ${login_signup_page.signup_email_input}    ${user_email}
+        Click Element    ${login_signup_page.signup_btn}
+        ${is_visible}=    Run Keyword And Return Status    Wait Until Element Is Visible    ${account_info_page.account_info_text}
+        Exit For Loop If    ${is_visible}
+    END
+    Run Keyword If    not ${is_visible}    Fail    Failed to proceed to the account info page after 5 attempts.
     Capture Page Screenshot
 
 
