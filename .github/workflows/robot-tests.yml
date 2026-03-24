@@ -27,6 +27,7 @@ jobs:
           pip install robotframework-seleniumlibrary
           pip install robotframework-faker
           pip install robotframework-pabot
+          pip install robotframework-ghareports
 
       - name: Run Tests in Parallel
         run: pabot --processes 4 -d results test_cases/
@@ -37,3 +38,7 @@ jobs:
         with:
           name: robot-test-results
           path: results/
+
+      - name: Test Summary
+        if: always() # Ensures reports are uploaded even if tests fail
+        run: robot --listener GHAReports -d results/ tests/
