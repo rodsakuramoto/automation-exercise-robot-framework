@@ -399,8 +399,8 @@ I enter payment details and confirm the order
     Click Element    ${payment_page.pay_button}
 
 I should see the order placed success message
-    Page Should Contain    Congratulations! Your order has been confirmed!
     Wait Until Element Is Visible    ${order_placed_page.continue_btn}
+    Page Should Contain    Congratulations! Your order has been confirmed!
 
 I should see the product in the cart
     Wait Until Element Is Visible    ${cart_page.cart_rows}
