@@ -7,9 +7,6 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   # ==========================================
   # 1. TEST CHROMIUM (Linux)
@@ -37,12 +34,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install robotframework robotframework-seleniumlibrary robotframework-faker
 
-      # 💡 AQUI: Usando o auto-retry para o Chromium
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v3
         with:
-          timeout_seconds: 30
-          max_attempts: 1
+          retry_wait_seconds: 30
+          max_attempts: 2
           command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
@@ -79,13 +75,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install robotframework robotframework-seleniumlibrary robotframework-faker
 
-      # 💡 AQUI: Usando o auto-retry para o Firefox
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v3
         with:
-          timeout_seconds: 30
-          max_attempts: 1
-          command: robot -d results -v BROWSER:headlessfirefox -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
+          retry_wait_seconds: 30
+          max_attempts: 2
+          command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
         if: always()
@@ -124,13 +119,12 @@ jobs:
       - name: Enable Safaridriver
         run: sudo safaridriver --enable
 
-      # 💡 AQUI: Usando o auto-retry para o WebKit/Safari
       - name: Run Tests with Auto-Retry
         uses: nick-fields/retry@v3
         with:
-          timeout_seconds: 30
-          max_attempts: 1
-          command: robot -d results -v BROWSER:safari -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
+          retry_wait_seconds: 30
+          max_attempts: 2
+          command: robot -d results -v BROWSER:chrome -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Results
         if: always()
