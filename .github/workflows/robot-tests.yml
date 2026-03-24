@@ -18,7 +18,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: false # 🚨 Ensures all suites run even if one fails early
       matrix:
         suite:
           - 'authentication.robot'
@@ -46,19 +46,19 @@ jobs:
           pip install robotframework-faker
 
       - name: Run Tests with Matrix
-        # 💡 Generates a uniquely named XML file for each matrix job to avoid conflicts during merge
+        # 💡 Generates a uniquely named XML file for each matrix job to avoid conflicts
         run: robot -d results -o output-${{ strategy.job-index }}.xml "test_cases/${{ matrix.suite }}"
 
       - name: Upload Test Results
-        if: always() # Ensures XMLs are uploaded even if tests fail
+        if: always() # 🚨 Ensures XMLs are uploaded even if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: robot-test-results-${{ strategy.job-index }}
           path: results/output-${{ strategy.job-index }}.xml
-          retention-days: 1 # We only need this temporarily for the next job
+          retention-days: 1 # Only kept temporarily for the next job
 
   # ==========================================
-  # JOB 2: MERGE XMLs AND GENERATE SUMMARY
+  # JOB 2: MERGE XMLs AND GENERATE JUNIT SUMMARY
   # ==========================================
   generate-report:
     needs: test
@@ -84,16 +84,18 @@ jobs:
           path: all-results
           merge-multiple: true # Flattens all downloaded XMLs into the 'all-results' folder
 
-      - name: Merge Results (Rebot)
-        # 💡 Combines all scattered XMLs into a single, comprehensive test report
-        run: rebot --name "Consolidated Test Report" --outputdir final-results --output merged-output.xml all-results/*.xml
+      - name: Merge Results and Generate JUnit (Rebot)
+        # 💡 Combines all scattered XMLs and ALSO generates the standard JUnit XML (-x)
+        run: rebot --name "Consolidated Test Report" --outputdir final-results --output merged-output.xml -x junit-report.xml all-results/*.xml
 
-      - name: Generate GitHub Actions Summary
-        uses: joonvena/robot-reporter@v2.5
+      - name: Generate Native Test Summary (JUnit)
+        uses: mikepenz/action-junit-report@v5
+        if: always()
         with:
-          report_path: final-results
-          summary: 'true'
-          show_passed_tests: 'false' # Keeps the summary clean by only showing failures
+          report_paths: 'final-results/junit-report.xml' # Points to the newly created JUnit file
+          require_tests: true
+          detailed_summary: true
+          include_passed: false # Keeps the summary clean by only showing failures
 
       - name: Upload Consolidated HTML Report (Optional)
         if: always()
