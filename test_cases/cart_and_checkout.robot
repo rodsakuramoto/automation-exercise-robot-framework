@@ -52,6 +52,7 @@ Search Products and Verify Cart After Login
     [Setup]    Create user account
     Given I search for a product and add it to the cart
     When I login with valid credentials
+    And Open Cart page
     Then Verify product is in cart
     [Teardown]    Delete user account
 
