@@ -15,29 +15,29 @@ Verify All Products and product detail page
 Search Product
     [Tags]    search    products    regression    tc_009
     Given I am on the all products page
-    When I search for the product "Men Tshirt"
+    When Search for product "Men Tshirt"
     Then products matching "Men Tshirt" should be displayed
 
 View Category Products
     [Tags]    category    navigation    regression    tc_018
-    Given I am on the automation exercise homepage
+    Given Open automation exercise homepage
     Then the category sidebar should be visible
-    When I navigate to the "Women" > "Dress" category
-    Then I should see the "Women - Dress Products" catalog
-    When I navigate to the "Men" > "Tshirts" category
-    Then I should see the "Men - Tshirts Products" catalog
+    When Open "Women" > "Dress" category
+    Then The "Women - Dress Products" catalog should be displayed
+    When Open "Men" > "Tshirts" category
+    Then The "Men - Tshirts Products" catalog should be displayed
 
 View Brand Products
     [Tags]    brand    navigation    regression    tc_019
     Given I am on the all products page
     Then the brands sidebar should be visible
-    When I filter by brand "Polo"
-    Then I should see the "Brand - Polo Products" catalog
-    When I filter by brand "H&M"
-    Then I should see the "Brand - H&M Products" catalog
+    When Filter products by brand "Polo"
+    Then The "Brand - Polo Products" catalog should be displayed
+    When Filter products by brand "H&M"
+    Then The "Brand - H&M Products" catalog should be displayed
 
 Add review on product
     [Tags]    products    review    regression    tc_021
     Given I am viewing a product's details
     When I submit a review
-    Then I should see a success message for the review
+    Then Verify review success message
