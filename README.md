@@ -54,13 +54,13 @@ pip install robotframework-pabot
 ### Run tests (sequential execution)
 
 ```bash
-robot -d results test_cases/test_cases.robot
+robot -d results test_cases/
 ```
 
 ### Run specific tests by tag
 
 ```bash
-robot -d results -i smoke test_cases/test_cases.robot
+robot -d results -i smoke test_cases/
 ```
 
 ---

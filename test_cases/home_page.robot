@@ -1,5 +1,6 @@
 *** Settings ***
-Resource        ${EXECDIR}/steps/steps.resource
+Resource        ${EXECDIR}/helpers/home_page_steps.resource
+Resource        ${EXECDIR}/helpers/cart_checkout_steps.resource
 
 
 Suite Setup         Launch Browser

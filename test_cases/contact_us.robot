@@ -1,7 +1,6 @@
 *** Settings ***
 Resource        ${EXECDIR}/steps/steps.resource
 
-
 Suite Setup         Launch Browser
 Suite Teardown      Close Browser
 

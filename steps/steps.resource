@@ -20,14 +20,23 @@ ${ZIPCODE}
 ${MOBILE_NUMBER}
 
 
-# ==============================================================================
-# SECTION 1 — IMPERATIVE STEPS (direct Selenium/library calls only)
-# ==============================================================================
-
 *** Keywords ***
 Launch browser
-    ${prefs}=    Create Dictionary    download.default_directory=${EXECDIR}    download.prompt_for_download=${FALSE}
-    Open Browser    browser=chrome    options=add_experimental_option("prefs", ${prefs});add_argument("--disable-notifications");add_argument("--disable-popup-blocking");add_argument("--no-sandbox");add_argument("--disable-dev-shm-usage");add_argument("--headless");add_argument("--host-resolver-rules=MAP *googleadservices.com 0.0.0.0, MAP *googlesyndication.com 0.0.0.0, MAP *g.doubleclick.net 0.0.0.0")
+    ${prefs}    Create Dictionary    download.default_directory=${EXECDIR}    download.prompt_for_download=${FALSE}
+
+    ${block_rules}    Set Variable    --host-resolver-rules=MAP *googleadservices.com 0.0.0.0, MAP *googlesyndication.com 0.0.0.0, MAP *g.doubleclick.net 0.0.0.0
+
+    ${options}    Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
+    Call Method    ${options}    add_experimental_option    prefs    ${prefs}
+    Call Method    ${options}    add_argument    --disable-notifications
+    Call Method    ${options}    add_argument    --disable-popup-blocking
+    Call Method    ${options}    add_argument    --no-sandbox
+    Call Method    ${options}    add_argument    --disable-dev-shm-usage
+    Call Method    ${options}    add_argument    --headless
+    Call Method    ${options}    add_argument    ${block_rules}
+
+    Open Browser    browser=chrome    options=${options}
+
     Set Window Size    1920    1080
 
 Open automation exercise homepage
@@ -505,219 +514,3 @@ the page should be scrolled to the top
 
 Scroll to top of page
     Execute Javascript    window.scrollTo(0, 0)
-
-
-# ==============================================================================
-# SECTION 2 — GIVEN/WHEN/THEN ORCHESTRATORS
-# Shared helpers and test-case-facing keywords.
-# Each keyword calls Section 1 steps directly.
-# ==============================================================================
-
-Create user account
-    Open automation exercise homepage
-    Open signup/login page
-    Enter valid signup name and email
-    Fill account information and address details
-    Confirm account creation
-    the account should be created successfully
-    Verify user is logged in
-    Capture Page Screenshot
-    Click Element    ${account_created_deleted.logout_btn}
-
-I register a new account successfully
-    Open signup/login page
-    Enter valid signup name and email
-    Fill account information and address details
-    Confirm account creation
-    the account should be created successfully
-
-I login with valid credentials
-    Open signup/login page
-    Enter correct email and password
-    Click login button
-
-I add the first and second products to the cart
-    Add first product to cart
-    Continue shopping
-    Add second product to cart
-
-I subscribe to the newsletter
-    Scroll down to footer
-    ${random_email}    FakerLibrary.Email
-    Input Text         ${footer.email_input}    ${random_email}
-    Click Button       ${footer.submit_btn}
-
-# --- Authentication ---
-
-I am logged in
-    Create user account
-    Open automation exercise homepage
-    Open signup/login page
-    Enter correct email and password
-    Click login button
-    Verify user is logged in
-
-I am on the signup page
-    Open automation exercise homepage
-    Open signup/login page
-
-I register a new user
-    Open signup/login page
-    Enter valid signup name and email
-    Fill account information and address details
-    Confirm account creation
-
-I attempt to login with invalid credentials
-    Open signup/login page
-    Enter incorrect email and password
-    Click login button
-
-I attempt to register with an existing email
-    Open signup/login page
-    Enter existing signup name and email
-    Click signup button
-
-# --- Products ---
-
-I am on the all products page
-    Open automation exercise homepage
-    Open Products page
-    Verify redirection to All Products page
-
-I am viewing a product's details
-    Open automation exercise homepage
-    Open Products page
-    Verify redirection to All Products page
-    Open first product details
-    Verify product detail page is open
-
-I view a product's details
-    Open first product details
-
-I should see the correct product details
-    Verify product detail page is open
-    Verify product details are visible
-
-products matching "${term}" should be displayed
-    Verify Searched Products section
-    Verify products related to "${term}"
-
-I submit a review
-    Verify "Write Your Review" section
-    Submit valid product review
-
-# --- Cart ---
-
-I add two products to the cart
-    Open Products page
-    Add first product to cart
-    Continue shopping
-    Add second product to cart
-    Open cart from modal
-
-I add "${quantity}" units of the product to the cart
-    Set product quantity to "${quantity}"
-    Add product to cart
-    Open cart from modal
-
-I am on the product detail page of a product
-    Open automation exercise homepage
-    Open first home page product details
-    Verify product detail page is open
-
-A product is in the cart
-    Open automation exercise homepage
-    Add products to cart
-    Open Cart page
-
-I am on the cart page
-    Open automation exercise homepage
-    Open Cart page
-
-I search for a product and add it to the cart
-    Open Products page
-    Verify redirection to All Products page
-    Search for product "Men Tshirt"
-    Verify Searched Products section
-    Verify products related to "Men Tshirt"
-    Add searched products to cart
-    Open Cart page
-    Verify product is in cart
-
-I add a recommended item to the cart
-    Verify "RECOMMENDED ITEMS" section
-    Add recommended product to cart
-    Open cart from modal
-
-# --- Checkout ---
-
-I complete the payment process
-    Enter comment and place order
-    Enter payment details and confirm order
-    Verify order placed success message
-
-I checkout as a new user and place the order
-    Proceed to checkout
-    Start registration from checkout
-    I register a new account successfully
-    Verify user is logged in
-    Open Cart page
-    Proceed to checkout again
-    Verify address details and review order
-    Enter comment and place order
-    Enter payment details and confirm order
-    Verify order placed success message
-
-I add a product to the cart and checkout to place the order
-    Add products to cart
-    Open Cart page
-    Proceed to checkout
-    Verify address details and review order
-    Enter comment and place order
-    Enter payment details and confirm order
-    Verify order placed success message
-
-I am registered and logged in
-    Open automation exercise homepage
-    I register a new account successfully
-    Verify user is logged in
-
-I am a registered user with products in the cart
-    Open automation exercise homepage
-    I register a new account successfully
-    Verify user is logged in
-    Add products to cart
-    Open Cart page
-    Verify product is in cart
-
-I have placed an order
-    Open automation exercise homepage
-    Add products to cart
-    Open Cart page
-    Proceed to checkout
-    Start registration from checkout
-    I register a new account successfully
-    Verify user is logged in
-    Open Cart page
-    Proceed to checkout again
-    Verify address details and review order
-    Enter comment and place order
-    Enter payment details and confirm order
-    Verify order placed success message
-    Capture Page Screenshot
-
-My address details should be pre-filled correctly
-    Verify address details and review order
-    Verify delivery and billing address match registration address
-
-# --- Scroll ---
-
-I scroll to the bottom and then to the top using the arrow
-    Scroll to bottom of page
-    the "SUBSCRIPTION" section should be visible
-    Scroll up using arrow button
-
-I scroll to the bottom and then back to the top
-    Scroll to bottom of page
-    the "SUBSCRIPTION" section should be visible
-    Scroll to top of page

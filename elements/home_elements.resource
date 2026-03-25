@@ -1,0 +1,30 @@
+*** Variables ***
+&{home_page}
+...    signup_login_btn=xpath://a[contains(@href, '/login')]
+...    home_logo=xpath://div[@class='logo pull-left']//img
+...    home_link=xpath://a[contains(text(), 'Home')]
+...    products_link=xpath://a[contains(text(), 'Products')]
+...    cart_link=xpath://a[contains(text(), 'Cart')]
+...    test_cases_link=xpath://a[contains(text(), 'Test Cases')]
+...    api_testing_link=xpath://a[contains(text(), 'API Testing')]
+...    video_tutorials_link=xpath://a[contains(text(), 'Video Tutorials')]
+...    contact_us_link=xpath://a[contains(text(), 'Contact us')]
+...    test_cases_btn=xpath://button[contains(text(), 'Test Cases')]
+...    apis_list_btn=xpath://button[contains(text(), 'APIs list for practice')]
+...    slider_img=xpath://div[@class='item active']//img
+...    category_heading=xpath://h2[contains(text(), 'Category')]
+...    women_category=xpath://a[normalize-space()='Women']
+...    men_category=xpath://a[normalize-space()='Men']
+...    kids_category=xpath://a[normalize-space()='Kids']
+...    brands_heading=xpath://h2[contains(text(), 'Brands')]
+...    polo_brand=xpath://a[contains(@href, '/brand_products/Polo')]
+...    hm_brand=xpath://a[contains(@href, '/brand_products/H&M')]
+...    features_items_heading=xpath://h2[contains(text(), 'Features Items')]
+...    blue_top_product=xpath://div[@class='productinfo text-center']//p[text()='Blue Top']
+...    blue_top_view_product=xpath://a[contains(@href, '/product_details/1')]
+...    men_tshirt_product=xpath://div[@class='productinfo text-center']//p[text()='Men Tshirt']
+...    sleeveless_dress_product=xpath://div[@class='productinfo text-center']//p[text()='Sleeveless Dress']
+...    recommended_items_header=xpath://h2[contains(text(), 'recommended items')]
+...    recommended_add_to_cart=xpath:(//div[contains(@class, 'recommended_items')]//a[contains(@class, 'add-to-cart')])[1]
+...    scroll_up_arrow=id:scrollUp
+...    full_fledged_text=xpath://div[@class='item active']//h2[contains(text(), 'Full-Fledged practice website for Automation Engineers')]

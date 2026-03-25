@@ -1,5 +1,5 @@
 *** Settings ***
-Resource        ${EXECDIR}/steps/steps.resource
+Resource        ${EXECDIR}/helpers/products_steps.resource
 
 
 Suite Setup         Launch Browser
