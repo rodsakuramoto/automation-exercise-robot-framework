@@ -54,13 +54,13 @@ pip install robotframework-pabot
 ### Run tests (sequential execution)
 
 ```bash
-robot -d results test_cases/test_cases.robot
+robot -d results test_cases/
 ```
 
 ### Run specific tests by tag
 
 ```bash
-robot -d results -i smoke test_cases/test_cases.robot
+robot -d results -i smoke test_cases/
 ```
 
 ---
@@ -72,13 +72,13 @@ This project is configured to support parallel execution using **Pabot**, which 
 ### Run tests in parallel
 
 ```bash
-pabot -d results test_cases/test_cases.robot
+pabot -d results test_cases/
 ```
 
 ### Control number of parallel processes
 
 ```bash
-pabot --processes 4 -d results test_cases/test_cases.robot
+pabot --processes 4 -d results test_cases/
 ```
 
 > Adjust the number of processes based on your machine capabilities.
